@@ -4,6 +4,7 @@ import pandas_gbq
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from datetime import datetime
+import os
 
 # Google Cloud Setup
 PROJECT_ID = "splendid-light-431320-d8"
@@ -11,9 +12,10 @@ DATASET_ID = "DataSF_Project"
 TABLE_ID = "real_estate_transactions"
 
 # Load Service Account Credentials
-CREDENTIALS = service_account.Credentials.from_service_account_file(
-    "splendid-light-431320-d8-60cdad876e55.json"
-)
+CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "/app/credentials.json")
+
+from google.oauth2 import service_account
+CREDENTIALS = service_account.Credentials.from_service_account_file(CREDENTIALS_PATH)
 
 # DataSF API Endpoint (Fetching up to 50,000 rows)
 API_URL = "https://data.sfgov.org/resource/wv5m-vpq2.json?$limit=50000"
