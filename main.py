@@ -13,12 +13,13 @@ TABLE_ID = "real_estate_transactions"
 # Connect to BigQuery
 bq_client = bigquery.Client(credentials=CREDENTIALS, project=PROJECT_ID)
 
-# Get the latest date in BigQuery (Using the Correct Column)
+# Get the latest date in BigQuery
 query = f"""
-    SELECT MAX(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%S', data_loaded_at)) AS latest_data_loaded_at
+    SELECT MAX(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S', data_loaded_at)) AS latest_data_loaded_at
     FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
     WHERE data_loaded_at IS NOT NULL
 """
+
 query_job = bq_client.query(query)
 latest_result = query_job.result()
 latest_data_loaded_at = None
