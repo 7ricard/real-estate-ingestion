@@ -24,7 +24,7 @@ else:
     exit(1)
 
 # Data Cleaning & Transformations
-df.fillna(None, inplace=True)  # Convert NaN to None
+df = df.where(pd.notnull(df), None)  # Convert NaN to None
 df["data_loaded_at"] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')  # Use UTC for consistency
 
 # Define BigQuery Table
