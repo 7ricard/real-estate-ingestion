@@ -11,4 +11,4 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Set the command to run the script
-CMD ["python", "main.py"]
+CMD ["python", "scripts/ingest_real_estate_transactions.py"]
