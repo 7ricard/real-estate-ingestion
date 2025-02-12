@@ -14,7 +14,7 @@ bq_client = bigquery.Client(credentials=CREDENTIALS, project=PROJECT_ID)
 
 # Get the latest data_loaded_at timestamp from BigQuery
 query = f"""
-    SELECT MAX(PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S', data_loaded_at)) AS latest_data_loaded_at
+    SELECT MAX(PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S', data_loaded_at)) AS latest_data_loaded_at
     FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
     WHERE data_loaded_at IS NOT NULL
 """
