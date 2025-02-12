@@ -14,7 +14,12 @@ bq_client = bigquery.Client(credentials=CREDENTIALS, project=PROJECT_ID)
 
 # Get the latest data_loaded_at timestamp from BigQuery
 query = f"""
-    SELECT MAX(PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S', data_loaded_at)) AS latest_data_loaded_at
+    SELECT MAX(
+        COALESCE(
+            SAFE.PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%E*S', data_loaded_at),
+            SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*S', data_loaded_at)
+        )
+    ) AS latest_data_loaded_at
     FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
     WHERE data_loaded_at IS NOT NULL
 """
@@ -25,9 +30,16 @@ latest_data_loaded_at = None
 for row in latest_result:
     latest_data_loaded_at = row["latest_data_loaded_at"]
 
+# Debugging log
+print(f"Latest data_loaded_at from BigQuery: {latest_data_loaded_at}")
+
 # Convert to API format
+latest_data_loaded_at_str = None
 if latest_data_loaded_at:
     latest_data_loaded_at_str = latest_data_loaded_at.strftime('%Y-%m-%dT%H:%M:%S')
+
+# Construct API URL
+if latest_data_loaded_at_str:
     API_URL = f"https://data.sfgov.org/resource/i98e-djp9.json?$limit=100000&$where=data_loaded_at>'{latest_data_loaded_at_str}'"
 else:
     API_URL = "https://data.sfgov.org/resource/i98e-djp9.json?$limit=100000"
